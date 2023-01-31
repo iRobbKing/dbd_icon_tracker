@@ -1,0 +1,20 @@
+[folders]
+actions = "icons/actions"
+states = "icons/states"
+
+[actions]
+cleansing_totem = "totem_action.png"
+opening_gates = "gates_action.png"
+repairing_generator = "generator_action.png"
+healing = "healing_action.png"
+recovering = "recovering_action.png"
+doing_killer_belonging = "killer_action.png"
+searching_chest = "chest_action.png"
+
+[states]
+carried = "carried_state.png"
+escaped = "escaped_state.png"
+hooked = "hooked_state.png"
+injured = "injured_state.png"
+dying = "dying_state.png"
+sacrificed = "sacrificed_state.png"
