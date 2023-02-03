@@ -1,27 +1,31 @@
+import itertools
+
 import config
 import tracker
 
-
-def prepair_templates():
-    return (
-        tracker.get_status_templates(config.STATUSES['folders']['states'], config.STATUSES['states']), 
-        tracker.get_status_templates(config.STATUSES['folders']['actions'], config.STATUSES['actions'])  
-    )
+import cv2
+def prepare_templates():
+    return tracker.read_status_templates(config.STATUSES)
 
 
-def read_survivor_states(states):
-    conf = dict(config.COORDINATES)
-    del conf['action_offset']
-    del conf['action_size']
+def _match_survivor_status(statuses, survivor_index):
+    grouped_by_zone = itertools.groupby(statuses.items(), lambda status: status[1]['zone'])
 
+    for zone, statuses in grouped_by_zone:
+        screenshot = tracker.take_zone_screenshot(
+            survivor_index,
+            config.SCREENSHOT_PROPS,
+            config.SCREENSHOT_ZONES[zone]
+        )
+
+        for status_name, status_props in statuses:
+            if tracker.match_survivor_status(status_props, screenshot):
+                yield zone, status_name
+                break
+        else:
+            yield zone, None
+
+
+def get_survivors_statuses(statuses):
     for i in range(4):
-        yield tracker.read_survivor_state(conf, states, i) 
-
-
-def read_survivor_actions(actions):
-    for i in range(4):
-        yield tracker.read_survivor_action(config.COORDINATES, actions, i) 
-
-
-def read_survivor_statuses(states, actions):
-    return zip(read_survivor_states(states), read_survivor_actions(actions))
+        yield dict(_match_survivor_status(statuses, i))

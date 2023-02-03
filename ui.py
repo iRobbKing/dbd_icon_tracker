@@ -11,10 +11,10 @@ class Worker(QtCore.QObject):
     progress = QtCore.pyqtSignal(tuple)
 
     def run(self):
-        states, actions = bot.prepair_templates()
+        statuses = bot.prepare_templates()
 
         while True:
-            self.progress.emit(tuple(bot.read_survivor_statuses(states, actions)))
+            self.progress.emit(tuple(bot.get_survivors_statuses(statuses)))
 
         self.finished.emit()
 
@@ -47,20 +47,19 @@ class MainWindow(QMainWindow):
         self.worker.progress.connect(self.reportProgress)
         self.thread.start()
 
-    def reportProgress(self, result):
-        def map_state(state):
-            return state.replace('_', ' ') if state != None else 'healthy'
+    def reportProgress(self, survivors_info):
+        def format_state(state):
+            return state.replace('_', ' ') if state is not None else 'unknown'
 
-        def map_action(action):
-            return action.replace('_', ' ') if action != None else 'doing nothing'
+        def format_action(action):
+            return action.replace('_', ' ') if action is not None else 'doing nothing'
 
-        def format_status(status):
-            state, action = status
-            return f'"{map_state(state)}", is {map_action(action)}'
-
-        formatted_statuses = map(format_status, result)
-        formatted_result = '\n'.join(formatted_statuses)
-        self.label.setText(formatted_result)
+        formatted_state = [format_state(survivor_info['state']) for survivor_info in survivors_info]
+        formatted_action = [format_action(survivor_info['action']) for survivor_info in survivors_info]
+        formatted_info = '\n'.join(
+            (f'"{state}", is {action}' for state, action in  zip(formatted_state, formatted_action))
+        )
+        self.label.setText(formatted_info)
 
     def mousePressEvent(self, _):
         QApplication.quit()

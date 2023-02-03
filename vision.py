@@ -1,14 +1,30 @@
-from __future__ import annotations
-
 import cv2
 import numpy as np
+import win32api
 import win32con
 import win32gui
 import win32ui
 
 
+def get_dead_by_daylight_hwnd():
+    dbd_hwnd = 0
+    def inner(hwnd, _):
+        nonlocal dbd_hwnd
+
+        text = win32gui.GetWindowText(hwnd)
+        if 'DeadByDaylight' in text:
+            dbd_hwnd = hwnd
+
+    win32gui.EnumWindows(inner, '')
+    return dbd_hwnd
+
+
+def read_picture_from_file(path):
+    return cv2.imread(path)
+
+
 def take_screenshot(x, y, w, h, hwnd=None):
-    w_dc = win32gui.GetWindowDC(hwnd)
+    w_dc = win32gui.GetWindowDC(get_dead_by_daylight_hwnd())
     dc_obj = win32ui.CreateDCFromHandle(w_dc)
     c_dc = dc_obj.CreateCompatibleDC()
     data_bit_map = win32ui.CreateBitmap()
@@ -22,7 +38,7 @@ def take_screenshot(x, y, w, h, hwnd=None):
 
     dc_obj.DeleteDC()
     c_dc.DeleteDC()
-    win32gui.ReleaseDC(hwnd, w_dc)
+    win32gui.ReleaseDC(get_dead_by_daylight_hwnd(), w_dc)
     win32gui.DeleteObject(data_bit_map.GetHandle())
 
     return np.ascontiguousarray(img[..., :3])
@@ -30,14 +46,6 @@ def take_screenshot(x, y, w, h, hwnd=None):
 
 def make_grey(picture):
     return cv2.cvtColor(picture, cv2.COLOR_RGB2GRAY)
-
-
-def take_screenshot_grey(*args, **kwargs):
-    return make_grey(take_screenshot(*args, **kwargs))
-
-
-def read_template(path):
-    return make_grey(cv2.imread(path))
 
 
 def match(picture, template, threshold):

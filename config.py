@@ -1,35 +1,42 @@
+from dataclasses import dataclass
+import os
 import tomllib
-
-_STATUS_ICONS_CONFIG = 'config/icons.toml'
-_COORDINATES_CONFIG = 'config/coordinates.toml'
+from typing import Any
 
 
-def _read_status_icons():
-    with open(_STATUS_ICONS_CONFIG, 'rb') as file:
-        return tomllib.load(file)
+@dataclass
+class ScreenshotProps:
+    top_left: tuple[int, int]
+    next_offset: int
 
 
-def _get_required_data(required_data, read_data):
-    for option in required_data:
-        if option not in read_data:
-            raise ValueError(f'Failed read option {option} from "{_COORDINATES_CONFIG}".')
+def _map_lists_to_tuples(table: dict[str, Any]) -> dict[str, Any]:
+    def inner_map(value: Any) -> Any:
+        if isinstance(value, dict):
+            return _map_lists_to_tuples(value)
 
-        yield option, read_data[option]
+        return tuple(value) if isinstance(value, list) else value
 
-
-def _read_coordinates():
-    required_data = (
-        'survivor_portrait',
-        'next_survivor_offset',
-        'action_offset',
-        'action_size',
-    )
-
-    with open(_COORDINATES_CONFIG, 'rb') as file:
-        read_data = tomllib.load(file)
-
-    return dict(_get_required_data(required_data, read_data))
+    return {key: inner_map(value) for key, value in table.items()}
 
 
-STATUSES = _read_status_icons()
-COORDINATES = _read_coordinates()
+def _read_config():
+    with open('config.toml', 'rb') as file:
+        config = tomllib.load(file)
+
+    return _map_lists_to_tuples(config)
+
+
+def _map_status_templates(statuses: dict) -> dict:
+    def map_template(status: dict[str, str]) -> dict[str, str]:
+        status['template'] = os.path.join('icons', status['template'])
+        return status
+
+    return {status_name: map_template(status_props) for status_name, status_props in statuses.items()}
+
+
+_CONFIG = _read_config()
+
+SCREENSHOT_PROPS = ScreenshotProps(**_CONFIG['screenshot_props'])
+SCREENSHOT_ZONES = _CONFIG['screenshot_zones']
+STATUSES = _map_status_templates(_CONFIG['statuses'])

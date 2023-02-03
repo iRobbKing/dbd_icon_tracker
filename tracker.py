@@ -1,48 +1,32 @@
-import os
+import vision
 
-from vision import take_screenshot_grey, read_template, match
-
-
-def _get_status_templates(folder, template_paths):
-    for status, template_path in template_paths.items():
-        full_path = os.path.join(folder, template_path)
-        yield status, read_template(full_path)
+def _read_template(path):
+    return vision.make_grey(vision.read_picture_from_file(path))
 
 
-def get_status_templates(folder, template_paths):
-    return dict(_get_status_templates(folder, template_paths))
+def _take_screenshot(x, y, w, h, hwnd=None):
+    return vision.make_grey(vision.take_screenshot(x, y, w, h, hwnd))
 
 
-def _take_survivor_portrait_screenshot(survivor_index, survivor_portrait, next_survivor_offset):
-    x, y, w, h = survivor_portrait
-    y += next_survivor_offset * survivor_index
-    return take_screenshot_grey(x, y, w, h)
+def read_status_templates(statuses):
+    def add_template_to_status(status):
+        status['template'] = _read_template(status['template'])
+        return status
+
+    return {status_name: add_template_to_status(status_props) for status_name, status_props in statuses.items()}
 
 
-def _take_survivor_action_screenshot(survivor_index, survivor_portrait, next_survivor_offset, action_offset, action_size):
-    x, y, _, _ = survivor_portrait
-    y += next_survivor_offset * survivor_index
+def take_zone_screenshot(survivor_index, screenshot_props, zone):
+    x, y = screenshot_props.top_left
 
-    x_offset, y_offset = action_offset
-    x += x_offset
-    y += y_offset
+    w, h = zone['size']
+    offset_x, offset_y = zone['offset']
 
-    w, h = action_size
+    x += offset_x
+    y += screenshot_props.next_offset * survivor_index + offset_y
 
-    return take_screenshot_grey(x, y, w, h)
-
-
-def _read_survivor_status(templates, screenshot):
-    for state, template in templates.items():
-        if match(screenshot, template, .6):
-            return state
+    return _take_screenshot(x, y, w, h)
 
 
-def read_survivor_state(coordinates, templates, survivor_index):
-    screenshot = _take_survivor_portrait_screenshot(survivor_index, **coordinates)
-    return _read_survivor_status(templates, screenshot)
-
-
-def read_survivor_action(coordinates, templates, survivor_index):
-    screenshot = _take_survivor_action_screenshot(survivor_index, **coordinates)
-    return _read_survivor_status(templates, screenshot)
+def match_survivor_status(status: dict, screenshot):
+    return vision.match(screenshot, status['template'], status.setdefault('threshold', .6))
