@@ -8,6 +8,7 @@ import win32ui
 
 def get_dead_by_daylight_hwnd():
     dbd_hwnd = 0
+
     def inner(hwnd, _):
         nonlocal dbd_hwnd
 
@@ -23,8 +24,8 @@ def read_picture_from_file(path):
     return cv2.imread(path)
 
 
-def take_screenshot(x, y, w, h, hwnd=None):
-    w_dc = win32gui.GetWindowDC(get_dead_by_daylight_hwnd())
+def take_screenshot(x, y, w, h, hwnd=get_dead_by_daylight_hwnd()):
+    w_dc = win32gui.GetWindowDC(hwnd)
     dc_obj = win32ui.CreateDCFromHandle(w_dc)
     c_dc = dc_obj.CreateCompatibleDC()
     data_bit_map = win32ui.CreateBitmap()
@@ -38,7 +39,7 @@ def take_screenshot(x, y, w, h, hwnd=None):
 
     dc_obj.DeleteDC()
     c_dc.DeleteDC()
-    win32gui.ReleaseDC(get_dead_by_daylight_hwnd(), w_dc)
+    win32gui.ReleaseDC(hwnd, w_dc)
     win32gui.DeleteObject(data_bit_map.GetHandle())
 
     return np.ascontiguousarray(img[..., :3])

@@ -3,7 +3,7 @@ import itertools
 import config
 import tracker
 
-import cv2
+
 def prepare_templates():
     return tracker.read_status_templates(config.STATUSES)
 
