@@ -1,12 +1,13 @@
 import vision
 
+vis = vision.Vision('DeadByDaylight')
 
 def _read_template(path):
     return vision.make_grey(vision.read_picture_from_file(path))
 
 
-def _take_screenshot(x, y, w, h, hwnd=vision.get_dead_by_daylight_hwnd()):
-    return vision.make_grey(vision.take_screenshot(x, y, w, h, hwnd))
+def _take_screenshot(x, y, w, h, hwnd=vis.winapi.hwnd):
+     return vision.make_grey(vision.take_screenshot(x, y, w, h, hwnd))
 
 
 def read_status_templates(statuses):
