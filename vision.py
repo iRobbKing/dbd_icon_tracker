@@ -1,19 +1,18 @@
 import cv2
 import numpy as np
-import win32api
 import win32con
 import win32gui
 import win32ui
 
 
-def get_dead_by_daylight_hwnd():
+def _get_window_hwnd(title):
     dbd_hwnd = 0
 
     def inner(hwnd, _):
         nonlocal dbd_hwnd
 
         text = win32gui.GetWindowText(hwnd)
-        if 'DeadByDaylight' in text:
+        if title in text:
             dbd_hwnd = hwnd
 
     win32gui.EnumWindows(inner, '')
@@ -24,7 +23,7 @@ def read_picture_from_file(path):
     return cv2.imread(path)
 
 
-def take_screenshot(x, y, w, h, hwnd=get_dead_by_daylight_hwnd()):
+def take_screenshot(x, y, w, h, hwnd=None):
     w_dc = win32gui.GetWindowDC(hwnd)
     dc_obj = win32ui.CreateDCFromHandle(w_dc)
     c_dc = dc_obj.CreateCompatibleDC()
@@ -49,7 +48,5 @@ def make_grey(picture):
     return cv2.cvtColor(picture, cv2.COLOR_RGB2GRAY)
 
 
-def match(picture, template, threshold):
-    result = cv2.matchTemplate(picture, template, cv2.TM_CCOEFF_NORMED)
-    locations = np.where(result >= threshold)
-    return list(zip(*locations[::-1]))
+def match(picture, template):
+    return cv2.matchTemplate(picture, template, cv2.TM_CCOEFF_NORMED)
