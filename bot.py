@@ -1,31 +1,74 @@
 import itertools
-
+import numpy as np
 import config
 import tracker
+import capture
+import cv2
 
+api = capture.WinAPI('DeadByDaylight')
+track =  tracker.Tracker(api)
 
-def prepare_templates():
-    return tracker.read_status_templates(config.STATUSES)
+class DbdHudTracker:
+    def __init__(self):
+        self.templates = self.prepare_templates()
+        self.windows = [0, 0, 0, 0]
+        for i in range(4):
+            self.windows[i] = cv2.namedWindow(f's{i}', cv2.WINDOW_NORMAL)
+            cv2.resizeWindow(f's{i}', 250, 250)
+            cv2.setWindowProperty(f's{i}', cv2.WND_PROP_TOPMOST, 1)
+            
+    def prepare_templates(self):
+        return track.read_status_templates(config.STATUSES)
+    
+    def get_survivor_screenshot(self, survivor_index):
+        screenshot = track.take_zone_screenshot(
+                survivor_index,
+                config.SCREENSHOT_PROPS,
+                config.SCREENSHOT_ZONES['state']
+            )
+        return screenshot
+    
+    def predict_survivor_state(self, statuses, survivor_index):
+        grouped_by_zone = itertools.groupby(statuses.items(), lambda status: status[1]['zone'])
+        state_names = list(statuses.keys())
+        states = []
 
+        for zone, statuses in grouped_by_zone:
+            screenshot = self.get_survivor_screenshot(survivor_index)
 
-def _match_survivor_status(statuses, survivor_index):
-    grouped_by_zone = itertools.groupby(statuses.items(), lambda status: status[1]['zone'])
+            for status_name, status_props in statuses:
+                if zone == 'state':
+                    prob = track.match_survivor_state(status_props, screenshot)
+                    states.append(prob)
 
-    for zone, statuses in grouped_by_zone:
-        screenshot = tracker.take_zone_screenshot(
-            survivor_index,
-            config.SCREENSHOT_PROPS,
-            config.SCREENSHOT_ZONES[zone]
-        )
+        probs = softmax(states)
+        maxProb = max(probs)
+        index = np.where(probs == maxProb)[0][0]
+        threshold = 0.13
+        return state_names[index] if maxProb > threshold else 'healthy'
+    
+    def get_survivors_states(self, states):
+        return [
+            self.predict_survivor_state(states, 0),
+            self.predict_survivor_state(states, 1),
+            self.predict_survivor_state(states, 2),
+            self.predict_survivor_state(states, 3)
+        ]
+    
+    def get_states(self):
+        return self.get_survivors_states(self.templates)
+    
+    def get_state(self, surv_index):
+        return self.predict_survivor_state(self.templates, surv_index)
 
-        for status_name, status_props in statuses:
-            if tracker.match_survivor_status(status_props, screenshot):
-                yield zone, status_name
-                break
-        else:
-            yield zone, None
+    def show(self):
+        for i in range(4):
+            img = self.get_survivor_screenshot(i)
+            state = self.get_state(i)
+            cv2.setWindowTitle(f's{i}', f's{i} - {state}')
+            cv2.imshow(f's{i}', img)
+        cv2.waitKey(1)
 
-
-def get_survivors_statuses(statuses):
-    for i in range(4):
-        yield dict(_match_survivor_status(statuses, i))
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()

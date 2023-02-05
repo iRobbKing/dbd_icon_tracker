@@ -1,7 +1,6 @@
-import ui
+import bot
 
-def main():
-    ui.run_ui()
+dbd = bot.DbdHudTracker()
 
-if __name__ == '__main__':
-    main()
+while True:
+    dbd.show()
