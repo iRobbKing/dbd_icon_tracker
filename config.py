@@ -17,6 +17,7 @@ class State:
 
 @dataclass
 class Zone:
+    name: str
     offset: tuple[int, int]
     size: tuple[int, int]
     threshold: float
@@ -51,7 +52,7 @@ def _read_zones(screenshot_zones):
 
         states = (State(status_path.split('.')[0], os.path.join(dirs[0], status_path)) for status_path in dirs[2])
 
-        yield Zone(zone_offset, zone_size, zone_threshold, tuple(states))
+        yield Zone(zone_name, zone_offset, zone_size, zone_threshold, tuple(states))
 
 
 _CONFIG = _read_config()

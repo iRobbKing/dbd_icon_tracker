@@ -1,10 +1,11 @@
 import bot
-import time
-dbd = bot.DbdHudTracker()
+import capture
+import tracker
 
-
-x = dbd.match_survivors_state()
+api = capture.WinAPI('DeadByDaylight')
+track =  tracker.Tracker(api)
+dbd = bot.DbdHudTracker(track)
 
 while True:
-    print(x())
-    time.sleep(1)
+    print(dbd.get_survivors_states())
+    dbd.show()
