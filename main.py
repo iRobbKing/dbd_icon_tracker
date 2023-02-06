@@ -2,6 +2,7 @@ import bot
 import capture
 import tracker
 
+
 api = capture.WinAPI('DeadByDaylight')
 track =  tracker.Tracker(api)
 dbd = bot.DbdHudTracker(track)

@@ -1,37 +1,14 @@
 import numpy as np
-import cv2
+import vision
 
 class Tracker:
     def __init__(self, api):
         self.api = api
 
-    def match_survivor_state(self, state: dict, screenshot):
-        result = cv2.matchTemplate(screenshot, state['template'], cv2.TM_CCOEFF_NORMED)
-        return np.max(result)
-    
-
-    def read_picture_from_file(self, path):
-        return cv2.imread(path)
-
-    def read_template(self, path):
-        return cv2.cvtColor(cv2.imread(path), cv2.COLOR_RGB2GRAY)
-
-    def read_status_templates(self, statuses):
-        def add_template_to_status(status):
-            status['template'] = self.read_template(status['template'])
-            return status
-
-        return {status_name: add_template_to_status(status_props) for status_name, status_props in statuses.items()}
-    
-    def make_gray(self, picture):
-        return cv2.cvtColor(picture, cv2.COLOR_RGB2GRAY)
-    
-    def match(self, picture, template):
-        return cv2.matchTemplate(picture, template, cv2.TM_CCOEFF_NORMED)
-
     def _match_statuses(self, picture, statuses):
-        grey_image = self.make_gray(picture)
-        return [(name, np.amax(self.match(grey_image, template))) for name, template in statuses]
+        grey_image = vision.make_gray(picture)
+        result = [(name, np.amax(vision.match(grey_image, template, mask))) for name, template, mask in statuses]
+        return result
 
     def take_zone_screenshot(self, screenshot_props, survivor_index, zone):
         x, y = screenshot_props.left_top
@@ -45,10 +22,22 @@ class Tracker:
         return self.api.get_screenshot(x, y, w, h)
 
     def _match_zone(self, zone):
-        states = [(status.name, self.read_template(status.path)) for status in zone.states]
+
+        names = []
+        templates = []
+        masks = []
+        for status in zone.states:
+            if 'png' in status.path:
+                names.append(status.name)
+                templates.append(vision.read_template(status.path))
+            elif 'bmp' in status.path:
+                masks.append(vision.read_mask(status.path))
+
+        states = list(zip(names, templates, masks))
 
         def take_screenshot(screenshot_props, survivor_index):
-            screenshot = self.take_zone_screenshot(screenshot_props, survivor_index, zone)
+            screenshot = self.take_zone_screenshot(
+                screenshot_props, survivor_index, zone)
             matches = self._match_statuses(screenshot, states)
             return max(matches, key=lambda state: state[1])
 

@@ -11,7 +11,6 @@ class WinAPI:
         self.dc_obj = win32ui.CreateDCFromHandle(self.w_dc)
         self.c_dc = self.dc_obj.CreateCompatibleDC()
         self.data_bit_map = win32ui.CreateBitmap()
-
     def _get_window_hwnd(self):
         dbd_hwnd = 0
         def inner(hwnd, _):
