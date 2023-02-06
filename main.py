@@ -1,7 +1,10 @@
-import ui
+import bot
+import time
+dbd = bot.DbdHudTracker()
 
-def main():
-    ui.run_ui()
 
-if __name__ == '__main__':
-    main()
+x = dbd.match_survivors_state()
+
+while True:
+    print(x())
+    time.sleep(1)

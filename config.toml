@@ -1,53 +1,29 @@
-screenshot_props.top_left = [ 80, 434 ]
-screenshot_props.next_offset = 77
+screenshot_props.left_top = [ 90, 435 ] # 1920x1080 in game HUD 100% (Default)
+screenshot_props.next_offset = 90 # 1920x1080 in game HUD 100% (Default)
 
 [screenshot_zones]
-state.offset = [ 0, 0 ]
-state.size = [ 68, 68 ]
+state.offset = [ 0, 0 ] # 1920x1080 in game HUD 100% (Default)
+state.size = [ 75, 75 ] # 1920x1080 in game HUD 100% (Default)
+state.threshold = 0.7
 
 action.offset = [ 80, 10 ]
 action.size = [ 32, 32 ]
+action.threshold = 0.55
 
-[statuses]
-# states
-injured.template = "injured_state.png"
-injured.zone = "state"
-injured.threshold = 0.7
+# [1920x1080]
+# state.size = [ 75, 75 ]
+# state.offset = [0, 0]
+# state.threshold = 0.7
 
-dying.template = "dying_state.png"
-dying.zone = "state"
+# action.size [ 32, 32 ]
+# action.offset = [ 80, 10 ]
+# action.threshold = 0.55
 
-carried.template = "carried_state.png"
-carried.zone = "state"
+# [WidthxHeight] #Your Width and Height
+# state.size = [ 75, 75 ]
+# state.offset = [0, 0]
+# state.threshold = 0.7
 
-hooked.template = "hooked_state.png"
-hooked.zone = "state"
-hooked.threshold = 0.44
-
-sacrificed.template = "sacrificed_state.png"
-sacrificed.zone = "state"
-
-escaped.template = "escaped_state.png"
-escaped.zone = "state"
-
-# actions
-repairing_generator.template = "generator_action.png"
-repairing_generator.zone = "action"
-
-cleansing_totem.template = "totem_action.png"
-cleansing_totem.zone = "action"
-
-opening_gates.template = "gates_action.png"
-opening_gates.zone = "action"
-
-healing.template = "healing_action.png"
-healing.zone = "action"
-
-recovering.template = "recovering_action.png"
-recovering.zone = "action"
-
-doing_killer_belonging.template = "killer_action.png"
-doing_killer_belonging.zone = "action"
-
-searching_chest.template = "chest_action.png"
-searching_chest.zone = "action"
+# action.size [ 32, 32 ] 
+# action.offset = [ 80, 10 ]
+# action.threshold = 0.55
