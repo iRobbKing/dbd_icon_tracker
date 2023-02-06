@@ -5,12 +5,12 @@ import tomllib
 
 @dataclass
 class ScreenshotProps:
-    top_left: tuple[int, int]
+    left_top: tuple[int, int]
     next_offset: int
 
 
 @dataclass
-class Status:
+class State:
     name: str
     path: str
 
@@ -20,7 +20,7 @@ class Zone:
     offset: tuple[int, int]
     size: tuple[int, int]
     threshold: float
-    statuses: tuple[Status, ...]
+    states: tuple[State, ...]
 
 
 def _map_lists_to_tuples(table):
@@ -49,9 +49,9 @@ def _read_zones(screenshot_zones):
         zone_size = screenshot_zones[zone_name]['size']
         zone_threshold = screenshot_zones[zone_name]['threshold']
 
-        statuses = (Status(status_path.split('.')[0], os.path.join(dirs[0], status_path)) for status_path in dirs[2])
+        states = (State(status_path.split('.')[0], os.path.join(dirs[0], status_path)) for status_path in dirs[2])
 
-        yield Zone(zone_offset, zone_size, zone_threshold, tuple(statuses))
+        yield Zone(zone_offset, zone_size, zone_threshold, tuple(states))
 
 
 _CONFIG = _read_config()

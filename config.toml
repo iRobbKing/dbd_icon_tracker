@@ -1,4 +1,4 @@
-screenshot_props.top_left = [ 90, 435 ] # 1920x1080 in game HUD 100% (Default)
+screenshot_props.left_top = [ 90, 435 ] # 1920x1080 in game HUD 100% (Default)
 screenshot_props.next_offset = 90 # 1920x1080 in game HUD 100% (Default)
 
 [screenshot_zones]
@@ -9,3 +9,21 @@ state.threshold = 0.7
 action.offset = [ 80, 10 ]
 action.size = [ 32, 32 ]
 action.threshold = 0.55
+
+# [1920x1080]
+# state.size = [ 75, 75 ]
+# state.offset = [0, 0]
+# state.threshold = 0.7
+
+# action.size [ 32, 32 ]
+# action.offset = [ 80, 10 ]
+# action.threshold = 0.55
+
+# [WidthxHeight] #Your Width and Height
+# state.size = [ 75, 75 ]
+# state.offset = [0, 0]
+# state.threshold = 0.7
+
+# action.size [ 32, 32 ] 
+# action.offset = [ 80, 10 ]
+# action.threshold = 0.55

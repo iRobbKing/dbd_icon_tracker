@@ -40,7 +40,7 @@ class Tracker:
 
 
     def _take_zone_screenshot(self, screenshot_props, survivor_index, zone):
-        x, y = screenshot_props.top_left
+        x, y = screenshot_props.left_top
 
         w, h = zone.size
         offset_x, offset_y = zone.offset
@@ -52,12 +52,12 @@ class Tracker:
 
 
     def _match_zone(self, zone):
-        statuses = [(status.name, self._read_template(status.path)) for status in zone.statuses]
+        states = [(status.name, self.read_template(status.path)) for status in zone.states]
 
         def take_screenshot(screenshot_props, survivor_index):
             screenshot = self._take_zone_screenshot(screenshot_props, survivor_index, zone)
-            matches = self._match_statuses(screenshot, statuses)
-            return max(matches, key=lambda status: status[1])
+            matches = self._match_statuses(screenshot, states)
+            return max(matches, key=lambda state: state[1])
 
         return take_screenshot
 

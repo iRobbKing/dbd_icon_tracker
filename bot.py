@@ -10,7 +10,7 @@ track =  tracker.Tracker(api)
 
 class DbdHudTracker:
     def __init__(self):
-        self.templates = self.prepare_templates()
+        # self.templates = self.prepare_templates()
         self.windows = [0, 0, 0, 0]
         for i in range(4):
             self.windows[i] = cv2.namedWindow(f's{i}', cv2.WINDOW_NORMAL)
