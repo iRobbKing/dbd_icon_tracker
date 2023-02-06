@@ -41,11 +41,10 @@ class DbdHudTracker:
                     prob = track.match_survivor_state(status_props, screenshot)
                     states.append(prob)
 
-        probs = softmax(states)
-        maxProb = max(probs)
-        index = np.where(probs == maxProb)[0][0]
-        threshold = 0.13
-        return state_names[index] if maxProb > threshold else 'healthy'
+        maxState = max(states)
+        index = np.where(states == maxState)[0][0]
+        threshold = 0.7
+        return state_names[index] if maxState > threshold else 'healthy'
     
     def get_survivors_states(self, states):
         return [
@@ -69,6 +68,15 @@ class DbdHudTracker:
             cv2.imshow(f's{i}', img)
         cv2.waitKey(1)
 
-def softmax(x):
-    e_x = np.exp(x - np.max(x))
-    return e_x / e_x.sum()
+    def match_survivors_state(self):
+        hud_tracker = track.survivor_hud_tracker(config.ZONES)
+
+        def clamp_survivor_status(survivor):
+            return [(name, value) if value >= config.ZONES[i].threshold else None
+                    for i, (name, value) in enumerate(survivor)]
+
+        def track1():
+            return [clamp_survivor_status(survivor)
+                    for survivor in hud_tracker(config.SCREENSHOT_PROPS)]
+
+        return track1
