@@ -1,25 +1,28 @@
 import cv2
 
-def create_window(winname):
-    cv2.namedWindow(winname, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(winname, 450, 300)
-    cv2.setWindowProperty(winname, cv2.WND_PROP_TOPMOST, 1)
 
-def set_title(winname, title):
-    cv2.setWindowTitle(winname, title)
+def create_window(window_name):
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.resizeWindow(window_name, 450, 300)
+    cv2.setWindowProperty(window_name, cv2.WND_PROP_TOPMOST, 1)
 
-def show(winname, image):
-    cv2.imshow(winname, image)
-    cv2.waitKey(1)
-    
-def read_template(path):
-    return cv2.cvtColor(cv2.imread(path), cv2.COLOR_RGB2GRAY)
 
-def read_mask(path):
-    return cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+def set_window_name(window_name, new_name):
+    cv2.setWindowTitle(window_name, new_name)
+
+
+def show_image_in_window(window_name, image, delay):
+    cv2.imshow(window_name, image)
+    cv2.waitKey(delay)
+
+
+def read_image(path):
+    return cv2.imread(path)
+
 
 def make_gray(picture):
     return cv2.cvtColor(picture, cv2.COLOR_RGB2GRAY)
+
 
 def match(picture, template, mask):
     return cv2.matchTemplate(picture, template, cv2.TM_CCOEFF_NORMED, mask=mask)
