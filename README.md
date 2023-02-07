@@ -7,9 +7,9 @@ import dbd_icon_tracker as dit
 
 
 def main():
-    with dit.WinAPI('DeadByDaylight') as capturer:
+    with dit.WinAPI('DeadByDaylight') as capture:
         while True:
-            print(capturer.get_screenshot)
+            print(dit.get_survivor_statuses(capture))
 
 
 if __name__ == '__main__':

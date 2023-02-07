@@ -21,22 +21,23 @@ class WinAPI:
     def __init__(self, window_name):
         self.hwnd = _get_window_hwnd(window_name)
 
-    def get_screenshot(self, x, y, w, h):
-        self.bitmap.CreateCompatibleBitmap(self.device_context, w, h)
-        self.compatible_device_context.SelectObject(self.bitmap)
-        self.compatible_device_context.BitBlt((0, 0), (w, h), self.device_context, (x, y), win32con.SRCCOPY)
-        signed_ints_array = self.bitmap.GetBitmapBits(True)
-        win32gui.DeleteObject(self.bitmap.GetHandle())
-        img = np.fromstring(signed_ints_array, dtype='uint8')
-        img.shape = (h, w, 4)
-        return img[:, :, :3]
-
     def __enter__(self):
         self.window_device_context = win32gui.GetWindowDC(self.hwnd)
         self.device_context = win32ui.CreateDCFromHandle(self.window_device_context)
         self.compatible_device_context = self.device_context.CreateCompatibleDC()
         self.bitmap = win32ui.CreateBitmap()
-        return self
+
+        def get_screenshot(x, y, w, h):
+            self.bitmap.CreateCompatibleBitmap(self.device_context, w, h)
+            self.compatible_device_context.SelectObject(self.bitmap)
+            self.compatible_device_context.BitBlt((0, 0), (w, h), self.device_context, (x, y), win32con.SRCCOPY)
+            signed_ints_array = self.bitmap.GetBitmapBits(True)
+            win32gui.DeleteObject(self.bitmap.GetHandle())
+            img = np.fromstring(signed_ints_array, dtype='uint8')
+            img.shape = (h, w, 4)
+            return img[:, :, :3]
+
+        return get_screenshot
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.device_context.DeleteDC()
