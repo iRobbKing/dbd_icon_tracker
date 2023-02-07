@@ -1,10 +1,6 @@
 import cv2
 
 
-def set_window_name(window_name, new_name):
-    cv2.setWindowTitle(window_name, new_name)
-
-
 def show_image_in_window(window_name, image):
     try:
         cv2.getWindowProperty(window_name, cv2.WND_PROP_AUTOSIZE)
