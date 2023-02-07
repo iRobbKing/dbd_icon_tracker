@@ -1,6 +1,6 @@
-import config
-import vision
-import tracker
+from . import config
+from . import tracker
+from . import vision
 
 
 def _get_survivor_screenshot(take_screenshot, survivor_index, zone):

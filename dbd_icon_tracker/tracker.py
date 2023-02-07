@@ -1,5 +1,6 @@
 import numpy as np
-import vision
+
+from . import vision
 
 
 def _read_template(path):

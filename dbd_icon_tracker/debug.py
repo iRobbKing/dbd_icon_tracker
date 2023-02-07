@@ -1,4 +1,4 @@
-import vision
+from . import vision
 
 
 def debug_show(tracker, delay):

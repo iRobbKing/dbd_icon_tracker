@@ -3,13 +3,15 @@ Python library for getting the game information by using HUD recognition.
 
 # Code Example
 ```py
-import dbdhudtracker as dht
+import dbd_icon_tracker as dit
 
-api = dht.WinAPI('DeadByDaylight')
-track = dht.Tracker(api, dht.config.DEFAULT)
-dbd = dht.DbdHudTracker(track)
 
-while True:
-    print(dbd.get_survivor_statuses())
-    dbd.show()
+def main():
+    with dit.WinAPI('DeadByDaylight') as capturer:
+        while True:
+            print(capturer.get_screenshot)
+
+
+if __name__ == '__main__':
+    main()
 ```

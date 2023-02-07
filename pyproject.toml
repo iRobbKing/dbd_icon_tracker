@@ -1,0 +1,18 @@
+[project]
+name = "dbd_icon_tracker"
+version = "1.0.0"
+authors = [
+  { name="Pyperdok" },
+  { name="Robb" },
+]
+description = "Package that allows to track current survivor state in Dead by Daylight using its HUD."
+readme = "README.md"
+requires-python = ">=3.11.1"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/iRobbKing/dbd_icon_tracker"
