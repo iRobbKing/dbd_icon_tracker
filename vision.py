@@ -1,18 +1,22 @@
 import cv2
 
 
-def create_window(window_name):
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(window_name, 450, 300)
-    cv2.setWindowProperty(window_name, cv2.WND_PROP_TOPMOST, 1)
-
-
 def set_window_name(window_name, new_name):
     cv2.setWindowTitle(window_name, new_name)
 
 
-def show_image_in_window(window_name, image, delay):
-    cv2.imshow(window_name, image)
+def show_image_in_window(window_name, image):
+    try:
+        cv2.getWindowProperty(window_name, cv2.WND_PROP_AUTOSIZE)
+    except cv2.error:
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, 450, 300)
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_TOPMOST, 1)
+    else:
+        cv2.imshow(window_name, image)
+
+
+def wait(delay):
     cv2.waitKey(delay)
 
 

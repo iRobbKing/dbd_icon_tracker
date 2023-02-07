@@ -20,10 +20,6 @@ def _get_window_hwnd(window_name):
 class WinAPI:
     def __init__(self, window_name):
         self.hwnd = _get_window_hwnd(window_name)
-        self.window_device_context = win32gui.GetWindowDC(self.hwnd)
-        self.device_context = win32ui.CreateDCFromHandle(self.window_device_context)
-        self.compatible_device_context = self.device_context.CreateCompatibleDC()
-        self.bitmap = win32ui.CreateBitmap()
 
     def get_screenshot(self, x, y, w, h):
         self.bitmap.CreateCompatibleBitmap(self.device_context, w, h)
@@ -35,7 +31,14 @@ class WinAPI:
         img.shape = (h, w, 4)
         return img[:, :, :3]
 
-    def __del__(self):
+    def __enter__(self):
+        self.window_device_context = win32gui.GetWindowDC(self.hwnd)
+        self.device_context = win32ui.CreateDCFromHandle(self.window_device_context)
+        self.compatible_device_context = self.device_context.CreateCompatibleDC()
+        self.bitmap = win32ui.CreateBitmap()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self.device_context.DeleteDC()
         self.compatible_device_context.DeleteDC()
         win32gui.ReleaseDC(self.hwnd, self.window_device_context)

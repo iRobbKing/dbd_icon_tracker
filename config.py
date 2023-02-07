@@ -69,7 +69,5 @@ def _read_zones(screenshot_zones):
 
 _CONFIG = _read_config()
 
-_SCREENSHOT_PROPS = ScreenshotProps(**_CONFIG['screenshot_props'])
-_ZONES = tuple(_read_zones(_CONFIG['screenshot_zones']))
-
-DEFAULT = {'zones': _ZONES, 'screenshot_props': _SCREENSHOT_PROPS}
+SCREENSHOT_PROPS = ScreenshotProps(**_CONFIG['screenshot_props'])
+ZONES = tuple(_read_zones(_CONFIG['screenshot_zones']))

@@ -1,16 +1,11 @@
+import hud_tracker
 import capture
-import config
-import dbdhudtracker as dht
-import tracker
 
 
 def main():
-    api = capture.WinAPI('DeadByDaylight')
-    track = tracker.Tracker(api, config.DEFAULT)
-    dbd = dht.DbdHudTracker(track)
-
-    while True:
-        dbd.show(250)
+    with capture.WinAPI('DeadByDaylight') as capturer:
+        while True:
+            hud_tracker.show_survivor_portraits(capturer.get_screenshot)
 
 
 if __name__ == '__main__':
