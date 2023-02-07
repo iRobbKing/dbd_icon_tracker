@@ -13,6 +13,7 @@ class ScreenshotProps:
 class State:
     name: str
     path: str
+    mask: str
 
 
 @dataclass
@@ -50,7 +51,18 @@ def _read_zones(screenshot_zones):
         zone_size = screenshot_zones[zone_name]['size']
         zone_threshold = screenshot_zones[zone_name]['threshold']
 
-        states = (State(status_path.split('.')[0], os.path.join(dirs[0], status_path)) for status_path in dirs[2])
+        states = []
+        for status_path in dirs[2]:
+            name = status_path.split('.')[0]
+            type = status_path.split('.')[1]
+
+            if type == 'bmp':
+                continue
+
+            path = os.path.join(dirs[0], name + '.png')
+            mask = os.path.join(dirs[0], name + '.bmp')
+
+            states.append(State(name, path, mask))
 
         yield Zone(zone_name, zone_offset, zone_size, zone_threshold, tuple(states))
 
@@ -60,4 +72,4 @@ _CONFIG = _read_config()
 _SCREENSHOT_PROPS = ScreenshotProps(**_CONFIG['screenshot_props'])
 _ZONES = tuple(_read_zones(_CONFIG['screenshot_zones']))
 
-DEFAULT = {'zones' : _ZONES, 'screenshot_props': _SCREENSHOT_PROPS}
+DEFAULT = {'zones': _ZONES, 'screenshot_props': _SCREENSHOT_PROPS}

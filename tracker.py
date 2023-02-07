@@ -30,17 +30,8 @@ class Tracker:
         return self.api.get_screenshot(x, y, w, h)
 
     def _match_zone(self, zone):
-        names = []
-        templates = []
-        masks = []
-        for status in zone.states:
-            if 'png' in status.path:
-                names.append(status.name)
-                templates.append(_read_template(status.path))
-            elif 'bmp' in status.path:
-                masks.append(_read_template(status.path))
-
-        states = list(zip(names, templates, masks))
+        states = tuple((status.name, _read_template(status.path), _read_template(status.mask))
+                       for status in zone.states)
 
         def match_screenshot(screenshot_props, survivor_index):
             screenshot = self.get_zone_screenshot(screenshot_props, survivor_index, zone)
