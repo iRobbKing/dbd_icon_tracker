@@ -1,12 +1,9 @@
-import bot
-import capture
-import tracker
+import dbdhudtracker as dht
 
-
-api = capture.WinAPI('DeadByDaylight')
-track =  tracker.Tracker(api)
-dbd = bot.DbdHudTracker(track)
+api = dht.WinAPI('DeadByDaylight')
+track = dht.Tracker(api, dht.config.DEFAULT)
+dbd = dht.DbdHudTracker(track)
 
 while True:
-    print(dbd.get_survivors_states())
+    print(dbd.get_survivor_statuses())
     dbd.show()
