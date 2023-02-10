@@ -39,7 +39,7 @@ class WinAPI:
 
         return get_screenshot
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb): #????
         self.device_context.DeleteDC()
         self.compatible_device_context.DeleteDC()
         win32gui.ReleaseDC(self.hwnd, self.window_device_context)

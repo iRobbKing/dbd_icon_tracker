@@ -9,7 +9,7 @@ def _read_template(path):
 
 def _match_statuses(picture, statuses):
     grey_image = vision.make_gray(picture)
-    return [(name, np.amax(vision.match(grey_image, template, mask))) for name, template, mask in statuses]
+    return [(name, np.amax(np.nan_to_num(vision.match(grey_image, template, mask), False, nan=0.0, posinf=0.0, neginf=0.0))) for name, template, mask in statuses]
 
 
 def _match_zone(zone):

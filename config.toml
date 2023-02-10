@@ -6,6 +6,11 @@ state.offset = [ 0, 0 ] # 1920x1080 in game HUD 100% (Default)
 state.size = [ 68, 68 ] # 1920x1080 in game HUD 100% (Default)
 state.threshold = 0.4
 
+
+generator.offset = [ 0, 795 ] # aka left_top
+generator.size = [ 250, 60 ]
+generator.threshold = 0.6
+
 action.offset = [ 80, 10 ]
 action.size = [ 32, 32 ]
-action.threshold = 1
+action.threshold = 1.0
